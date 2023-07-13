@@ -73,6 +73,40 @@ public class AppMain extends JFrame implements ActionListener{
 		}
 	}
 	
+	public int getTotalByte(URL url) {
+		//넘겨받은 스트림을 이용하여 구성하고 있는 알갱이 세기
+		InputStream is=null;
+		int data=-1;
+		int readCount=0;
+		
+		try {
+			is = url.openStream();
+			while(true) {
+				try {
+					data=is.read();
+					if(data==-1)break;
+					readCount++;
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}finally {
+			if(is!=null) {
+				try {
+					is.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		System.out.println("읽어들인 바이트 수는 "+readCount);
+		return readCount;
+	}
+	
 	//인터넷상의 자원을 대상으로 빨대를 꽂아 실행중인 프로그램으로 들이마시기
 	//동시에 지정한 경로로 데이터 출력
 	public void download() {
@@ -86,9 +120,24 @@ public class AppMain extends JFrame implements ActionListener{
 			
 			//1바이트씩 읽어 파일에 출력해 본다.
 			int data=-1;
+			//생성되 스트림으로 읽어들일 수 있는 총 바이트 수(용량)
+			int total=getTotalByte(url);
+			System.out.println("스트림으로 읽어들일 총 바이트 수는"+total);
+			
+			int readCount=0;
+			double ratio=0;
+			
+			//백분율 계산하기
+			
 			while(true) {
 				data=is.read();//1바이트 읽기
 				if(data==-1)break;
+				readCount++;
+				
+				ratio=(readCount/(double)total)*100;
+				//System.out.println(ratio);
+				bar.setValue((int)ratio);
+				
 				fos.write(data);//1바이트 쓰기
 			}
 			JOptionPane.showMessageDialog(this, "다운로드 완료");

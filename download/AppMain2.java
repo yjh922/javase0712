@@ -86,10 +86,13 @@ public class AppMain2 extends JFrame implements ActionListener{
 			
 			//1바이트씩 읽어 파일에 출력해 본다.
 			int data=-1;
+			byte[] b;
 		
 			
 			while(true) {
 				data=is.read();//1바이트 읽기
+				b=is.readAllBytes();
+				System.out.println(b);
 				if(data==-1)break;
 				fos.write(data);//1바이트 쓰기
 				
